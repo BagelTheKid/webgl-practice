@@ -1,0 +1,53 @@
+{
+  "name": "webgl-practice",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BagelTheKid/webgl-practice.git"
+  },
+  "scripts": {
+    "build": "tsc -p app/",
+    "build:watch": "tsc -p app/ -w",
+    "serve": "lite-server",
+    "prestart": "npm run build",
+    "start": "concurrently \"npm run build:watch\" \"npm run serve\"",
+    "lint": "tslint ./app/**/*.ts -t verbose"
+  },
+  "author": "Nicolas Polhamus",
+  "license": "MIT",
+  "dependencies": {
+    "@angular/common": "~4.0.0",
+    "@angular/compiler": "~4.0.0",
+    "@angular/core": "~4.0.0",
+    "@angular/forms": "~4.0.0",
+    "@angular/http": "~4.0.0",
+    "@angular/platform-browser": "~4.0.0",
+    "@angular/platform-browser-dynamic": "~4.0.0",
+    "@angular/router": "~4.0.0",
+    "@types/bootstrap": "^3.3.33",
+    "@types/core-js": "^0.9.41",
+    "@types/jquery": "^2.0.46",
+    "@types/sylvester": "^0.1.5",
+    "@types/webgl-ext": "^0.0.28",
+    "@types/webgl2": "^0.0.1",
+    "angular-in-memory-web-api": "~0.3.0",
+    "bootstrap": "4.0.0-alpha.4",
+    "core-js": "^2.4.1",
+    "octicons": "4.4.0",
+    "reflect-metadata": "^0.1.10",
+    "rxjs": "5.0.1",
+    "sylvester": "^0.0.21",
+    "sylvester.js": "^0.1.1",
+    "systemjs": "0.19.40",
+    "zone.js": "^0.8.4"
+  },
+  "devDependencies": {
+    "@types/jasmine": "2.5.36",
+    "@types/node": "^7.0.27",
+    "canonical-path": "0.0.2",
+    "concurrently": "^3.2.0",
+    "lite-server": "^2.2.2",
+    "tslint": "^3.15.1",
+    "typescript": "~2.1.0"
+  }
+}
