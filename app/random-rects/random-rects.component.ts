@@ -1,16 +1,13 @@
-///<reference path="../node_modules/@types/webgl2/index.d.ts" />
-///<reference path="../node_modules/@types/sylvester/index.d.ts" />
+///<reference path="../../node_modules/@types/webgl2/index.d.ts" />
 
 import {Component, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
-import {DocumentService} from './document.service';
-
+import {DocumentService} from '../document.service';
 
 @Component({
     moduleId: module.id,
-    selector: 'webgl-app',
-    templateUrl: 'base.component.html'
+    templateUrl: 'random-rects.component.html'
 })
-export class BaseComponent implements AfterViewInit{
+export class RandomRectsComponent implements AfterViewInit {
     private canvas: HTMLCanvasElement;
     private gl: WebGLRenderingContext;
     private document: any;
@@ -54,10 +51,6 @@ export class BaseComponent implements AfterViewInit{
         if (!this.gl.getProgramParameter(this.shaderProgram, this.gl.LINK_STATUS)) {
             alert(`Unable to initialize shader program: ${this.gl.getProgramInfoLog(this.shaderProgram)}`);
         }
-        // this.gl.useProgram(this.shaderProgram);
-
-        // this.vertexPositionAttribute = this.gl.getAttribLocation(this.shaderProgram, 'aVertexPosition');
-        // this.gl.enableVertexAttribArray(this.vertexPositionAttribute);
     }
 
     private getShader(gl: any, id: string, type: number = null): any {
@@ -98,22 +91,6 @@ export class BaseComponent implements AfterViewInit{
             return null;
         }
         return shader;
-    }
-
-    private initBuffers(): void {
-        this.squareVerticiesBuffer = this.gl.createBuffer();
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.squareVerticiesBuffer);
-
-        let verticies = [
-            10, 20,
-            80, 20,
-            10, 30,
-            10, 30,
-            80, 20,
-            80, 30
-        ];
-
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(verticies), this.gl.STATIC_DRAW);
     }
 
     private randomInt(range: number): number {
@@ -158,32 +135,5 @@ export class BaseComponent implements AfterViewInit{
             this.gl.uniform4f(this.colorUniformLocation, Math.random(), Math.random(), Math.random(), 1);
             this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
         }
-    }
-
-    generateMoreWebgl(): void {
-        this.initShaders();
-        this.vertexPositionAttribute = this.gl.getAttribLocation(this.shaderProgram, 'aVertexPosition');
-        this.resolutionUniformLocation = this.gl.getUniformLocation(this.shaderProgram, 'uResolution');
-        this.initBuffers();
-
-        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-        this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-
-        this.gl.useProgram(this.shaderProgram);
-        this.gl.enableVertexAttribArray(this.vertexPositionAttribute);
-
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.squareVerticiesBuffer);
-        this.gl.vertexAttribPointer(this.vertexPositionAttribute, 2, this.gl.FLOAT, false, 0, 0);
-        this.gl.uniform2f(this.resolutionUniformLocation, this.canvas.width, this.canvas.height);
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
-    }
-
-    generateWebgl(): void {
-        this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        this.gl.enable(this.gl.DEPTH_TEST);
-        this.gl.depthFunc(this.gl.LEQUAL);
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     }
 }

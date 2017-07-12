@@ -1,0 +1,21 @@
+<div class="card text-xs-center">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-lg-4">
+                <label for="x-range">x</label>
+                <input id="x-range" type="range" name="x" value="0" min="0" max="canvas.width" [(ngModel)]="xRange" 
+                    (ngModelChange)="updateXDraw()">
+                <span>{{xRange}}</span>
+            </div>
+            <div class="col-lg-4 offset-lg-1">
+                <label for="y-range">y</label>
+                <input id="y-range" type="range" name="y" value="0" min="0" max="canvas.height" [(ngModel)]="yRange"
+                    (ngModelChange)="updateYDraw()">
+                <span>{{yRange}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="card-block">
+        <canvas #glcanvas id="glCanvas" width="640" height="480"></canvas>
+    </div>
+</div>
