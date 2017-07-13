@@ -15,6 +15,7 @@ export class TranslationComponent implements AfterViewInit {
     shaderProgram: WebGLProgram;
     positionAttribute: number;
     resolutionLocation: WebGLUniformLocation;
+    translationLocation: WebGLUniformLocation;
     colorLocation: WebGLUniformLocation;
     positionBuffer: WebGLBuffer;
     translation: [number, number];
@@ -23,6 +24,7 @@ export class TranslationComponent implements AfterViewInit {
     color: [number, number, number, number];
     xRange = 0;
     yRange = 0;
+    fDrawn = false;
     @ViewChild('glcanvas') glCanvas: ElementRef;
 
     constructor(private documentService: DocumentService) {}
@@ -47,7 +49,12 @@ export class TranslationComponent implements AfterViewInit {
 
     private initShaders(): void {
         let fragmentShader: WebGLShader = this.getShader(this.gl, '2d-fragment-shader');
-        let vertexShader: WebGLShader = this.getShader(this.gl, '2d-vertex-shader');
+        let vertexShader: WebGLShader = undefined;
+        if (!this.fDrawn) {
+            vertexShader = this.getShader(this.gl, '2d-vertex-shader');
+        } else {
+            vertexShader = this.getShader(this.gl, '2d-vertex-shader-t');
+        }
 
         // Create the shaders
         this.shaderProgram = this.gl.createProgram();
@@ -106,9 +113,15 @@ export class TranslationComponent implements AfterViewInit {
         this.positionAttribute = this.gl.getAttribLocation(this.shaderProgram, 'a_position');
         this.resolutionLocation = this.gl.getUniformLocation(this.shaderProgram, 'u_resolution');
         this.colorLocation = this.gl.getUniformLocation(this.shaderProgram, 'u_color');
+        if (this.fDrawn) {
+            this.translationLocation = this.gl.getUniformLocation(this.shaderProgram, 'u_translation');
+        }
 
         this.positionBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
+        if (this.fDrawn) {
+            this.setGeometry();
+        }
 
         this.translation = [0, 0];
         this.width = 100;
@@ -124,7 +137,9 @@ export class TranslationComponent implements AfterViewInit {
         this.gl.useProgram(this.shaderProgram);
         this.gl.enableVertexAttribArray(this.positionAttribute);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
-        this.setRectangle();
+        if (!this.fDrawn) {
+            this.setRectangle();
+        }
 
         let size = 2;
         let type: number = this.gl.FLOAT;
@@ -134,9 +149,16 @@ export class TranslationComponent implements AfterViewInit {
         this.gl.vertexAttribPointer(this.positionAttribute, size, type, normalize, stride, offset);
         this.gl.uniform2f(this.resolutionLocation, this.canvas.width, this.canvas.height);
         this.gl.uniform4fv(this.colorLocation, this.color);
+        if (this.fDrawn) {
+            this.gl.uniform2fv(this.translationLocation, this.translation);
+        }
 
         let primitiveType: number = this.gl.TRIANGLES;
-        this.gl.drawArrays(primitiveType, 0, 6);
+        if (!this.fDrawn) {
+            this.gl.drawArrays(primitiveType, 0, 6);
+        } else {
+            this.gl.drawArrays(primitiveType, 0, 18);
+        }
     }
 
     private setRectangle(): void {
@@ -156,6 +178,47 @@ export class TranslationComponent implements AfterViewInit {
             ]),
             this.gl.STATIC_DRAW
         );
+    }
+
+    private setGeometry(): void {
+        this.gl.bufferData(
+            this.gl.ARRAY_BUFFER,
+            new Float32Array([
+                // left column
+                0, 0,
+                30, 0,
+                0, 150,
+                0, 150,
+                30, 0,
+                30, 150,
+
+                // top rung
+                30, 0,
+                100, 0,
+                30, 30,
+                30, 30,
+                100, 0,
+                100, 30,
+
+                // middle rung
+                30, 60,
+                67, 60,
+                30, 90,
+                30, 90,
+                67, 60,
+                67, 90,
+            ]),
+            this.gl.STATIC_DRAW);
+    }
+
+    setGeometryF(): void {
+        this.fDrawn = true;
+        this.xRange = 0;
+        this.yRange = 0;
+        this.translation = [0, 0];
+        this.gl.deleteProgram(this.shaderProgram);
+        this.initShaders();
+        this.initRect();
     }
 
     updateXDraw(): void {
